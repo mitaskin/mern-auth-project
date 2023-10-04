@@ -7,6 +7,8 @@ dotenv.config();
 import userRoutes from './routes/user.route.js';
 import authRoutes from './routes/auth.route.js';
 
+const app = express();
+
 mongoose
     .connect(process.env.MONGO_URI)
     .then(() => {
@@ -16,7 +18,6 @@ mongoose
         console.log(err);
     });
 
-const app = express();
 
 app.use(express.json());
 app.use(cors());
