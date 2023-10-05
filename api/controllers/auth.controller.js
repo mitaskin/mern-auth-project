@@ -7,10 +7,10 @@ import dotenv from 'dotenv';
 export const signup = async (req, res, next) => {
     const { username, email, password } = req.body;
 
-    const hashedPassword = await bcryptjs.hashSync(password, 12);
-    const newUser = new User({ username, email, password: hashedPassword });
-
     try {
+        const hashedPassword = await bcryptjs.hashSync(password, 12);
+        const newUser = new User({ username, email, password: hashedPassword });
+        
         await newUser.save();
         res.status(201).json({ message: 'Signup success!', newUser });
     } catch (error) {

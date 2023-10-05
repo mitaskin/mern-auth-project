@@ -1,11 +1,15 @@
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({});
   const [error, setError] = useState(null);
+  const [successs, setSuccess] = useState(null);
+  const [statusMessage, setMessage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -23,15 +27,31 @@ export default function SignUp() {
         formData
       );
 
-      const data = await res.json();
+      console.log(res);
+  
 
-      if (data.success == false) {
-        setError(false);
+      if(res.success === false) {
+        setLoading(false);
+        setError(true);
+        setSuccess(false);
         return;
       }
+      setSuccess(true);
+      setMessage("Account created successfully");
+      console.log(successs);
+      navigate("/sign-in");
+      
+
     } catch (error) {
       setLoading(false);
       setError(true);
+      setSuccess(false);
+      if (error.response && error.response.data) {
+        setMessage(error.response.data.message);
+        return;
+      } else {
+        setMessage("Something went wrong");
+      }
     }
   };
 
@@ -66,7 +86,7 @@ export default function SignUp() {
           disabled={loading}
           className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-90 disabled:opacity-40"
         >
-          {loading ? "Loading..." : "Sign Up"}
+          {loading ? "Loading..." : successs ? statusMessage : "Sign Up"}
         </button>
       </form>
 
@@ -76,7 +96,7 @@ export default function SignUp() {
           <span className="text-blue-500">Sign In</span>
         </Link>
       </div>
-      <p className="text-red-700 mt-5">{error && "Something went wrong"}</p>
+      <p className="text-red-700 mt-5">{error ? statusMessage : null}</p>
     </div>
   );
 }
