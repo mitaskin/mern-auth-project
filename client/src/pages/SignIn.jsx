@@ -10,7 +10,7 @@ import {
 
 export default function SignIn() {
   const [formData, setFormData] = useState({ email: "", password: "" });
-  const [errorMessage, setErrorMessage] = useState(null);
+  const { errorMessage } = useSelector((state) => state.user);
   const { loading, error } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -23,20 +23,20 @@ export default function SignIn() {
     e.preventDefault();
 
     try {
-      dispatch(signInStart());
-      await axios.post("http://localhost:3000/api/auth/signin", formData);
-      dispatch(signInSuccess(formData));
+      dispatch(signInStart()); //loading değişkenini true yapar
+      const resApi = await axios.post("http://localhost:3000/api/auth/signin", formData);
+      dispatch(signInSuccess(resApi.data.user));
+      console.log(resApi);
       navigate("/");
     } catch (err) {
       console.log(err);
-      
+
       if (err.response && err.response.data) {
-        setErrorMessage(err.response.data.message);
+        //response ve data varsa
         dispatch(signInFailure(err.response.data));
         return;
       } else {
         dispatch(signInFailure(err));
-        setErrorMessage("Something went wrong");
       }
     }
   };
@@ -74,7 +74,7 @@ export default function SignIn() {
           <span className="text-blue-500">Sign Up</span>
         </Link>
       </div>
-      <p className="text-red-700 mt-5">{error ? errorMessage : null}</p>
+      <p className="text-red-700 mt-5">{error ? errorMessage || "Something Went Wrong.Please Contact Admin" : " "}</p>
     </div>
   );
 }

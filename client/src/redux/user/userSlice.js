@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+//Proje ilk açıldığında redux store'unun içindeki user objesinin ilk hali.
 const initialState = {
     currentUser: null,
     loading: false,
@@ -8,12 +9,16 @@ const initialState = {
     errorMessage: ''
 };
 
-const userSlice = createSlice({
+const userSlice = createSlice({ //createSlice fonksiyonu ile redux store'unun içindeki user objesini oluşturuyoruz.
     name: 'user',
     initialState,
     reducers: {
         signInStart: (state) => {
+            state.currentUser = null;
             state.loading = true;
+            state.error = false;
+            state.errorRes = '';
+            state.errorMessage = '';
         },
         signInSuccess: (state, action) => {
             state.currentUser = action.payload;

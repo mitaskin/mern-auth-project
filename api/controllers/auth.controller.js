@@ -32,13 +32,13 @@ export const signin = async (req, res, next) => {
             throw errorHandler(401, 'Password is incorrect!');
         }
 
-        const { password: hashedPassword, ...rest } = existingUser._doc;
+        const { password: hashedPassword, ...user } = existingUser._doc;
 
         const token = jwt.sign({ id: existingUser._id }, process.env.JWT_SECRET);
         res //maxAge: 24 * 60 * 60 * 1000 = 1 day
             .cookie('access_token', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 })
             .status(200)
-            .json({ message: 'Signin success!', rest });
+            .json({ message: 'Signin success!', user });
 
     } catch (error) {
         next(error);
