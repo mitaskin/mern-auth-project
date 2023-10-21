@@ -1,9 +1,22 @@
-import {configureStore} from '@reduxjs/toolkit'; //Bu kütüphane ile redux store oluşturuyoruz.
-import userReducer from './user/userSlice'; //userReducer fonksiyonunu import ediyoruz.
+import {configureStore, combineReducers} from '@reduxjs/toolkit';
+import userReducer from './user/userSlice'; 
+import {persistReducer, persistStore} from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 
-export const store = configureStore({ //store'u configureStore fonksiyonu ile obje oluşturuyoruz.
-    reducer: {user: userReducer}, //reducer'a userReducer fonksiyonunu atıyoruz.
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware({ //Bu fonksiyon ile redux store'unun içindeki objelerin serialize edilmesini engelliyoruz.
+const persistConfig = {
+    key: 'root',
+    version: 1,
+    storage,
+};
+
+const rootReducer = combineReducers({user: userReducer,});
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+export const store = configureStore({
+    reducer: persistedReducer, 
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware({
         serializableCheck: false, 
     }),
 });
+
+export const persistor = persistStore(store);
